@@ -1,21 +1,37 @@
 # Personas
 
-Coding agents you can hire into your terminal.
+Agents you can hire into your terminal.
 
 Ready-to-use [personas](https://github.com/genai-io/san/blob/main/docs/concepts/persona.md)
-for [San](https://github.com/genai-io/san) — each one adapts the working style of
-a well-known open-source coding agent to San's prompt model and tool surface.
+for [San](https://github.com/genai-io/san). A persona is a folder that bundles a
+system prompt, a skill set, and a config overlay. Selecting one swaps all three
+as a unit, mid-session, without a restart.
 
-A persona is a folder that bundles a system prompt, a skill set, and a config
-overlay. Selecting one swaps all three as a unit, mid-session, without a
-restart. Switch with `/persona`.
-
-| Persona | Style | Adapted from |
-|---|---|---|
-| `codex` | Autonomous: acts first, verifies, reports concisely. Strong opinions on frontend design. | [openai/codex](https://github.com/openai/codex) (Apache-2.0) |
-| `aider` | Surgical: minimal diffs, strict scope, asks when ambiguous, never leaves stubs. | [Aider-AI/aider](https://github.com/Aider-AI/aider) (Apache-2.0) |
+| Persona | What it is |
+|---|---|
+| `codex` | Autonomous coding: acts first, verifies, reports concisely. Strong opinions on frontend design. Adapted from [openai/codex](https://github.com/openai/codex). |
+| `aider` | Surgical coding: minimal diffs, strict scope, asks when ambiguous, never leaves stubs. Adapted from [Aider-AI/aider](https://github.com/Aider-AI/aider). |
+| `readonly` | Answers questions, analyzes code, debugs environments — **cannot write**. Enforced by a deny-list, not by asking nicely. |
+| `social-creator` | 社媒主理人 — 公众号文案、讲解视频脚本、小红书 / X 等社交媒体内容创作. |
 
 ## Install
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/genai-io/personas/main/install.sh | bash -s -- codex
+```
+
+Installs into the current project (`./.san`) and enables it. Add `--user` for
+`~/.san` (available in every project), or `--dir <path>` to target another
+project. Windows:
+
+```powershell
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/genai-io/personas/main/install.ps1))) -Persona codex
+```
+
+To remove: same URL, `uninstall.sh` / `uninstall.ps1`.
+
+Or just copy the directories yourself — this repo mirrors the layout of
+`~/.san/personas/` exactly:
 
 ```bash
 git clone https://github.com/genai-io/personas.git
@@ -23,24 +39,26 @@ cp -r personas/*/ ~/.san/personas/
 ```
 
 The trailing `/` matches directories only, so the repo's `README`, `LICENSE`,
-and `NOTICE` stay out of your personas directory. Copy a single one instead if
-you prefer: `cp -r personas/codex ~/.san/personas/`.
+and `NOTICE` stay out of your personas directory.
 
-Then run `/persona` in San and pick one. Scope your choice:
+Then switch with `/persona` in San. Scope matters:
 
 - `~/.san/personas/<name>/` — available in every project
 - `<project>/.san/personas/<name>/` — project-only; overrides a user-level
   persona of the same name
 
-## What these are — and are not
+## Two kinds of persona here
 
-These are **adaptations, not ports.** A coding agent's system prompt is tightly
-coupled to its own harness: it names that harness's tools, assumes its context
-model, and writes for its renderer. Copying one verbatim into San does not give
-you that agent — it gives you a model reasoning about tools that do not exist.
+**Original** (`readonly`, `social-creator`) — written for San from scratch.
 
-So each persona keeps the upstream's *working philosophy* and re-expresses its
-*mechanics* against San's tools. Two examples of what that means in practice:
+**Adapted** (`codex`, `aider`) — these take the working style of an
+openly-licensed coding agent and retarget it at San.
+
+Adapted personas are **adaptations, not ports.** A coding agent's system prompt
+is tightly coupled to its own harness: it names that harness's tools, assumes its
+context model, and writes for its renderer. Copying one verbatim into San does
+not give you that agent — it gives you a model reasoning about tools that do not
+exist. Two examples of what that means in practice:
 
 - Aider's prompt says `ONLY EVER RETURN CODE IN A *SEARCH/REPLACE BLOCK*!`
   because Aider parses those blocks out of the model's text output. San has an
@@ -51,15 +69,15 @@ So each persona keeps the upstream's *working philosophy* and re-expresses its
   the CLI" and then specifies its own file-reference syntax. San renders markdown
   via glamour. Following that instruction would degrade output, so it is dropped.
 
-Every persona ships a `NOTICE` documenting exactly what was kept, changed,
-dropped, and why — both because Apache-2.0 §4(b) requires modified files to say
-they were modified, and because you should be able to see how far a persona has
-drifted from the thing it is named after.
+Every adapted persona ships a `NOTICE` documenting exactly what was kept,
+changed, dropped, and why — both because Apache-2.0 §4(b) requires modified
+files to say they were modified, and because you should be able to see how far a
+persona has drifted from the thing it is named after.
 
 ## Scope: openly licensed sources only
 
-This repo only adapts agents whose prompts are published by their owners under a
-license that permits redistribution — Apache-2.0 and MIT, today.
+Adapted personas only come from agents whose prompts are published by their
+owners under a license that permits redistribution — Apache-2.0 and MIT, today.
 
 **We do not accept personas transcribed from closed-source agents** (Claude Code,
 Cursor, Windsurf, Devin, and similar), and PRs adding them will be declined. Their
@@ -75,8 +93,7 @@ San's actual tools will also simply work better.
 
 ## Adding a persona
 
-One directory per persona, at the repo root — this repo mirrors the layout of
-`~/.san/personas/` exactly.
+One directory per persona, at the repo root.
 
 ```
 <name>/
@@ -87,7 +104,7 @@ One directory per persona, at the repo root — this repo mirrors the layout of
 ├── skills/
 │   └── <skill>/SKILL.md persona-scoped skills
 ├── settings.json        description, skill states, config overlay
-└── NOTICE               attribution + modification record
+└── NOTICE               attribution + modification record (adapted personas only)
 ```
 
 All parts are optional; anything you omit falls back to San's built-in default.
@@ -95,12 +112,12 @@ The persona name is the directory name.
 
 Checklist for a PR:
 
-1. Source is Apache-2.0, MIT, or similar — link the repo, license, and the exact
-   commit SHA you read.
-2. `NOTICE` records what you kept, changed, and dropped, and why.
-3. No references to tools San does not have. San's surface: `Read` `Write`
+1. If adapted: source is Apache-2.0, MIT, or similar — link the repo, license,
+   and the exact commit SHA you read, and record the changes in `NOTICE`.
+2. No references to tools San does not have. San's surface: `Read` `Write`
    `Edit` `Bash` `Grep` `Glob` `Agent` `Skill` `TaskCreate`/`TaskUpdate`/…
    `WebSearch` `WebFetch`.
+3. Every skill directory has a `SKILL.md` — without one San will not load it.
 4. Guidance that only matters sometimes belongs in `skills/`, not in the system
    prompt — a skill's description stays resident while its body loads on demand.
 5. The persona is meaningfully different from San's built-in default. If it
@@ -108,6 +125,5 @@ Checklist for a PR:
 
 ## License
 
-The personas in this repo are Apache-2.0, matching their upstream sources. See
-[`LICENSE`](LICENSE), the top-level [`NOTICE`](NOTICE), and each persona's own
-`NOTICE`.
+Apache-2.0 — see [`LICENSE`](LICENSE), the top-level [`NOTICE`](NOTICE), and each
+adapted persona's own `NOTICE`.

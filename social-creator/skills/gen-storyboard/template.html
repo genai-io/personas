@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{TITLE}} · storyboard</title>
+<!--
+  分镜板 · 模板（由 scripts/build.mjs 用 storyboard.json 填充，勿手改占位符）
+  · 占位符：TITLE / META / FINAL（双大括号），以及 SCENES 整块标记。
+  · 一镜一卡：左画面框（image/video，或"待生成"占位）+ 右文案/提示词。
+  · skill2 回填 image_*，skill3 回填 video_* 后重跑 build.mjs，本页同位刷新。
+  · 零依赖单文件，macOS 系统手写体；预览：open <project>.storyboard.html
+-->
+<style>
+  :root{
+    --paper:#FBF6EA; --paper2:#F3EAD6; --ink:#34302A; --ink2:#6a6358; --ink3:#9a9488;
+    --line:rgba(80,70,40,.22); --marker:#FFE08A;
+    --blue:#4F7CAC; --green:#6FA287; --red:#D2694C; --gold:#DDA13A; --plum:#9B6A9E;
+    --hand:"Hanzipen SC","Hannotate SC","Yuanti SC","STKaiti","KaiTi","楷体",cursive;
+    --body:"Hannotate SC","Hanzipen SC","STKaiti","PingFang SC","Microsoft YaHei",sans-serif;
+    --mono:"JetBrains Mono","SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--paper);color:var(--ink);font-family:var(--body);
+    font-size:17px;line-height:1.7;
+    background-image:radial-gradient(rgba(120,110,90,.10) 1px, transparent 1px);
+    background-size:22px 22px;
+  }
+  .wrap{max-width:1000px;margin:0 auto;padding:42px 22px 80px}
+
+  /* ---------- 页眉 ---------- */
+  header{margin-bottom:30px}
+  h1{font-family:var(--hand);font-size:40px;line-height:1.16;margin:0 0 8px;letter-spacing:1px}
+  .meta{font-family:var(--mono);font-size:13.5px;color:var(--ink2)}
+  .final{margin-top:16px;display:flex;gap:12px;align-items:center;
+    background:rgba(111,162,135,.14);border:2px solid var(--green);
+    border-radius:12px 4px 14px 4px/4px 14px 4px 12px;padding:10px 16px}
+  .final span{font-family:var(--hand);font-size:18px;color:var(--green)}
+  .final a{font-family:var(--mono);font-size:13px;color:var(--ink);word-break:break-all}
+
+  /* ---------- 分镜卡 ---------- */
+  .scene{
+    display:grid;grid-template-columns:minmax(300px,440px) 1fr;gap:22px;
+    align-items:start;margin:22px 0;padding:18px;
+    background:rgba(255,255,255,.45);border:2px solid var(--line);
+    border-radius:6px 18px 18px 6px;box-shadow:2px 3px 0 rgba(80,70,40,.07);
+  }
+  .frame{
+    position:relative;width:100%;background:#2f2b25;overflow:hidden;
+    border:2.5px solid var(--ink);border-radius:12px 4px 14px 4px/4px 14px 4px 12px;
+    box-shadow:3px 4px 0 rgba(80,70,40,.16);
+  }
+  .frame .media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .frame.placeholder, .media.placeholder{
+    position:relative;inset:auto;display:flex;flex-direction:column;gap:8px;
+    align-items:center;justify-content:center;width:100%;height:100%;
+    background:repeating-linear-gradient(45deg,#322d27,#322d27 10px,#2b2620 10px,#2b2620 20px);
+    color:#c9bca3;
+  }
+  .ph-mark{font-size:34px;opacity:.85}
+  .ph-txt{font-family:var(--mono);font-size:12.5px;letter-spacing:1px;opacity:.8}
+  .num{position:absolute;top:0;left:0;z-index:2;font-family:var(--hand);font-size:19px;
+    color:var(--paper);background:var(--ink);padding:2px 13px;
+    border-radius:0 0 12px 0;box-shadow:2px 2px 0 rgba(0,0,0,.18)}
+
+  /* ---------- 文案/提示词 ---------- */
+  .body{min-width:0}
+  .row{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .label{font-family:var(--hand);font-size:18px;color:var(--ink)}
+  .pill{font-family:var(--mono);font-size:11.5px;padding:1px 9px;border-radius:9px 3px 10px 3px/3px 10px 3px 9px;border:1.6px solid}
+  .pill.todo{color:var(--ink3);border-color:var(--ink3)}
+  .pill.img{color:var(--gold);border-color:var(--gold)}
+  .pill.done{color:var(--green);border-color:var(--green)}
+  .text{font-size:18px;line-height:1.75;margin:4px 0 12px}
+  .text .hl{background:linear-gradient(transparent 56%, var(--marker) 56%);padding:0 3px}
+  details.prompts{border-top:1.5px dashed var(--line);padding-top:8px}
+  details.prompts>summary{font-family:var(--mono);font-size:12px;color:var(--ink2);
+    cursor:pointer;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+  .pk{font-family:var(--hand);font-size:14px;color:var(--ink2);margin:8px 0 2px}
+  .pp{font-family:var(--mono);font-size:12.5px;line-height:1.6;color:#5b5346;
+    background:rgba(120,110,90,.08);border-left:3px solid var(--blue);
+    padding:8px 12px;margin:0;white-space:pre-wrap;word-break:break-word;border-radius:0 8px 8px 0}
+  .pk + .pp{border-left-color:var(--plum)}
+
+  footer{margin-top:40px;text-align:center;color:var(--ink3);font-size:13px;font-family:var(--mono)}
+
+  @media(max-width:680px){
+    .scene{grid-template-columns:1fr;gap:14px}
+    h1{font-size:30px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>{{TITLE}}</h1>
+    <div class="meta">{{META}}</div>
+    {{FINAL}}
+  </header>
+
+  <!--SCENES-->
+
+  <footer>social-creator · gen-storyboard — 改 storyboard.json 后重跑 build.mjs 即可刷新</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,43 @@
+{
+  "project": "morning-coffee",
+  "title": "一杯手冲，叫醒一座城",
+  "size": "1152x768",
+  "style": "warm cinematic, soft golden morning light, shallow depth of field, consistent cozy cafe character",
+  "seed": 73219,
+  "scenes": [
+    {
+      "id": 1,
+      "text": "清晨六点，城市还没醒，第一缕光落在窗台。",
+      "image_prompt": "An empty wooden cafe windowsill at dawn, a single ceramic cup, first warm sunlight grazing the surface, soft golden morning light, shallow depth of field, cinematic, high detail",
+      "motion_prompt": "Slow push-in toward the cup, dust motes drifting in the light, gentle and calm",
+      "image_url": null,
+      "image_file": null,
+      "video_task_id": null,
+      "video_url": null,
+      "video_file": null
+    },
+    {
+      "id": 2,
+      "text": "热水绕着咖啡粉打圈，香气先一步醒来。",
+      "image_prompt": "Close-up of a gooseneck kettle pouring a thin water stream over fresh coffee grounds in a dripper, blooming foam, steam rising, warm golden light, shallow depth of field, cinematic, high detail",
+      "motion_prompt": "Steady macro shot, water spiraling, steam curling upward, smooth slow motion",
+      "image_url": null,
+      "image_file": null,
+      "video_task_id": null,
+      "video_url": null,
+      "video_file": null
+    },
+    {
+      "id": 3,
+      "text": "第一口下肚，这座城，才算真正开机。",
+      "image_prompt": "A person's hands cradling a warm coffee cup by a bright window overlooking a waking city skyline, soft golden morning light, shallow depth of field, cinematic, cozy mood, high detail",
+      "motion_prompt": "Gentle pull-back from the cup to reveal the city beyond the window, warm and hopeful",
+      "image_url": null,
+      "image_file": null,
+      "video_task_id": null,
+      "video_url": null,
+      "video_file": null
+    }
+  ],
+  "final_video": null
+}
