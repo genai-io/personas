@@ -1,0 +1,6 @@
+{
+  "description": "Autonomous coding agent in the style of the Codex CLI — acts first, verifies, reports concisely",
+  "skills": {
+    "frontend-design": "active"
+  }
+}

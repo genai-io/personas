@@ -1,0 +1,67 @@
+This persona is a derivative work adapted from Aider.
+
+    Aider — AI pair programming in your terminal
+    Copyright Paul Gauthier and the Aider contributors
+    Licensed under the Apache License, Version 2.0
+    https://github.com/Aider-AI/aider
+
+Source material:
+
+    aider/coders/base_prompts.py
+    aider/coders/editblock_prompts.py
+    at commit 5dc9490bb35f9729ef2c95d00a19ccd30c26339c
+
+Upstream ships no NOTICE file.
+
+
+MODIFICATIONS (Apache-2.0 section 4(b))
+=======================================
+
+Aider's prompts are more tightly coupled to Aider's own harness than Codex's
+are, so this persona keeps Aider's *working philosophy* and drops its
+*mechanics*. It is an adaptation, not a port.
+
+1. STRUCTURE. Aider composes its prompt from Python class attributes
+   (main_system, system_reminder, lazy_prompt, overeager_prompt, …) with
+   runtime format placeholders. This persona is plain markdown split across
+   San's three prompt parts.
+
+2. REMOVED — the SEARCH/REPLACE block protocol, including:
+
+       "ONLY EVER RETURN CODE IN A *SEARCH/REPLACE BLOCK*!"
+
+   and the whole `<<<<<<< SEARCH` / `=======` / `>>>>>>> REPLACE` format spec.
+   Aider's harness parses these blocks out of the model's *text output*. San has
+   an Edit tool, so the model calls a tool instead. Carrying this instruction
+   over would actively break the persona: the model would print code blocks
+   rather than invoke Edit.
+
+   The *discipline* the format encodes is kept, restated for the Edit tool in
+   system/rules.md — minimal matches, no long runs of unchanging lines, split
+   large changes into small edits, two edits to move code.
+
+3. REMOVED — the "add files to the chat" context model, including the
+   files_content_* / files_no_full_files* prompts and the instruction to name
+   file paths and stop until the user adds them. Aider requires the human to
+   curate context; San's agent reads the repo itself via Read, Grep, and Glob.
+   The concept does not exist here.
+
+4. KEPT, essentially verbatim — the two prompts that carry Aider's character:
+
+       overeager_prompt: "Pay careful attention to the scope of the user's
+       request. Do what they ask, but no more. Do not improve, comment, fix or
+       modify unrelated parts of the code in any way!"
+
+       lazy_prompt: "You are diligent and tireless! You NEVER leave comments
+       describing code without implementing it! You always COMPLETELY IMPLEMENT
+       the needed code!"
+
+   Also kept: "Act as an expert software developer", the instruction to respect
+   existing conventions and libraries, "If the request is ambiguous, ask
+   questions", and "think step-by-step and explain the needed changes in a few
+   short sentences".
+
+5. ADDED — a Git section reflecting Aider's one-logical-change-per-commit
+   habit. In Aider this behavior lives in the harness (it auto-commits each
+   edit), not in the prompt; San does not auto-commit, so the habit is stated
+   as prose instead.

@@ -1,0 +1,55 @@
+This persona is a derivative work adapted from OpenAI Codex.
+
+    OpenAI Codex
+    Copyright 2025 OpenAI
+    Licensed under the Apache License, Version 2.0
+    https://github.com/openai/codex
+
+Source material:
+
+    codex-rs/core/gpt-5.2-codex_prompt.md
+    at commit 2e4f55608b4ad26d9c48ea45a6fcd20bfd5e9fe8
+
+The upstream NOTICE file also carries an attribution for Ratatui (MIT). It is
+omitted here because it pertains to Codex's TUI code, which is not part of this
+derivative work — as permitted by Apache-2.0 section 4(d).
+
+
+MODIFICATIONS (Apache-2.0 section 4(b))
+=======================================
+
+The original is a single flat system prompt written for the Codex CLI. This
+persona is a modified derivative, restructured and partly rewritten for San's
+prompt model and tool surface.
+
+1. STRUCTURE. Split into San's three prompt parts — system/identity.md,
+   system/behavior.md, system/rules.md. The original is one document.
+
+2. IDENTITY REWRITTEN. The original opens:
+
+       "You are Codex, based on GPT-5. You are running as a coding agent in the
+        Codex CLI on a user's computer."
+
+   This is false in San and would have the model reason from a product identity
+   and tool set that are not present. system/identity.md now describes the
+   working style instead of claiming the product identity.
+
+3. TOOLS REMAPPED to San's tool surface:
+
+       apply_patch   ->  Edit (single-file edits) / Write (new files)
+       Plan tool     ->  TaskCreate / TaskUpdate
+
+   The original's preference for `rg` is dropped: San exposes first-class Grep
+   and Glob tools, so the shell-search guidance does not apply.
+
+4. REMOVED — Codex's renderer contract. The original instructs "You are
+   producing plain text that will later be styled by the CLI" and then
+   prescribes header casing, bullet counts, and a file-reference URI syntax
+   (`b/server/index.js#L10`). These describe Codex's own TUI parser. San renders
+   markdown via glamour, so the instruction is not merely unnecessary here — it
+   is wrong, and following it would degrade output.
+
+5. RELOCATED — the "Frontend tasks" section is now an on-demand skill at
+   skills/frontend-design/SKILL.md. Under San's persona model a skill's
+   description lives in the system prompt while its body loads only when
+   invoked, so this guidance no longer costs tokens on unrelated turns.

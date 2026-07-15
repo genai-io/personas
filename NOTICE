@@ -1,0 +1,21 @@
+Personas for San
+Copyright 2026 Meng Yan
+
+This product includes personas adapted from third-party open-source coding
+agents. Each persona directory carries its own NOTICE file recording its
+upstream source, license, the exact commit it was adapted from, and what was
+changed. Those per-persona NOTICE files are part of this notice.
+
+    codex/NOTICE
+        Adapted from OpenAI Codex — https://github.com/openai/codex
+        Copyright 2025 OpenAI
+        Licensed under the Apache License, Version 2.0
+
+    aider/NOTICE
+        Adapted from Aider — https://github.com/Aider-AI/aider
+        Copyright Paul Gauthier and the Aider contributors
+        Licensed under the Apache License, Version 2.0
+
+None of the personas in this repository are verbatim copies of their upstream
+sources. All are modified derivatives, restructured for San's prompt model and
+retargeted at San's tool surface. See each NOTICE for the specific changes.
