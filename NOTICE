@@ -16,6 +16,12 @@ changed. Those per-persona NOTICE files are part of this notice.
         Copyright Paul Gauthier and the Aider contributors
         Licensed under the Apache License, Version 2.0
 
-None of the personas in this repository are verbatim copies of their upstream
-sources. All are modified derivatives, restructured for San's prompt model and
-retargeted at San's tool surface. See each NOTICE for the specific changes.
+    software-engineer/NOTICE
+        Original prose applying Andrej Karpathy's public observations on LLM
+        coding pitfalls (https://x.com/karpathy/status/2015883857489522876).
+        Ideas reused; no third-party text reused. See the file for details.
+
+None of the adapted personas in this repository are verbatim copies of their
+upstream sources. All are modified derivatives, restructured for San's prompt
+model and retargeted at San's tool surface. See each NOTICE for the specific
+changes.

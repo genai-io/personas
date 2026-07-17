@@ -11,6 +11,7 @@ as a unit, mid-session, without a restart.
 |---|---|
 | `codex` | Autonomous coding: acts first, verifies, reports concisely. Strong opinions on frontend design. Adapted from [openai/codex](https://github.com/openai/codex). |
 | `aider` | Surgical coding: minimal diffs, strict scope, asks when ambiguous, never leaves stubs. Adapted from [Aider-AI/aider](https://github.com/Aider-AI/aider). |
+| `software-engineer` | A disciplined senior engineer: thinks before coding, asks instead of assuming, writes the minimum that solves the problem, changes only what the task requires. Principles from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876) on LLM coding pitfalls. |
 | `readonly` | Answers questions, analyzes code, debugs environments — **cannot write**. Enforced by a deny-list, not by asking nicely. |
 | `social-creator` | 社媒主理人 — 公众号文案、讲解视频脚本、小红书 / X 等社交媒体内容创作. |
 
@@ -47,9 +48,16 @@ Then switch with `/persona` in San. Scope matters:
 - `<project>/.san/personas/<name>/` — project-only; overrides a user-level
   persona of the same name
 
-## Two kinds of persona here
+## Kinds of persona here
 
 **Original** (`readonly`, `social-creator`) — written for San from scratch.
+
+**Idea-sourced** (`software-engineer`) — original prose that applies principles
+stated publicly by someone else. `software-engineer` expresses Andrej Karpathy's
+public observations about how LLMs go wrong at the keyboard. The ideas are
+public and not protectable; the text is written from scratch (the popular repo
+packaging those ideas carries no license, so none of its wording was reused).
+Its `NOTICE` spells out exactly what was and was not reused.
 
 **Adapted** (`codex`, `aider`) — these take the working style of an
 openly-licensed coding agent and retarget it at San.
