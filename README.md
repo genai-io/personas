@@ -11,7 +11,7 @@ as a unit, mid-session, without a restart.
 |---|---|
 | `codex` | Autonomous coding: acts first, verifies, reports concisely. Strong opinions on frontend design. Adapted from [openai/codex](https://github.com/openai/codex). |
 | `aider` | Surgical coding: minimal diffs, strict scope, asks when ambiguous, never leaves stubs. Adapted from [Aider-AI/aider](https://github.com/Aider-AI/aider). |
-| `software-engineer` | A disciplined senior engineer: thinks before coding, asks instead of assuming, writes the minimum that solves the problem, changes only what the task requires. Bundles a `code-review` skill (correctness / bug hunting). Principles from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876) on LLM coding pitfalls. |
+| `software-engineer` | A disciplined senior engineer: thinks before coding, asks instead of assuming, writes the minimum that solves the problem, changes only what the task requires. Bundles four skills — `code-review` (bugs), `refactor` (behavior-preserving restructuring), `debug` (root-cause-first), `tdd` (red/green/refactor). Principles from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876) on LLM coding pitfalls. |
 | `readonly` | Answers questions, analyzes code, debugs environments — **cannot write**. Enforced by a deny-list, not by asking nicely. |
 | `social-creator` | 社媒主理人 — 公众号文案、讲解视频脚本、小红书 / X 等社交媒体内容创作. |
 
