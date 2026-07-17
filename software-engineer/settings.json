@@ -4,6 +4,7 @@
     "code-review": "active",
     "refactor": "active",
     "debug": "active",
-    "tdd": "active"
+    "tdd": "active",
+    "simplify": "active"
   }
 }

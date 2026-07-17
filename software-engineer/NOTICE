@@ -44,6 +44,18 @@ skills/code-review — original, written from scratch for San.
 
 skills/refactor — original, written from scratch for San.
 
+skills/simplify — an adaptation of San's own built-in "simplify" skill, used
+    under the Apache License, Version 2.0.
+
+        San — Copyright 2026 Meng Yan
+        https://github.com/genai-io/san
+        file .san/skills/simplify/SKILL.md
+
+    Kept: the review-then-fix flow and the three lenses (reuse, quality,
+    efficiency) with their concrete checklists. Condensed to match the other
+    bundled skills and given explicit scope boundaries against code-review
+    (bugs) and refactor (structure).
+
 skills/debug — a distilled adaptation of the "investigate" skill from gstack,
     used under the MIT License.
 
