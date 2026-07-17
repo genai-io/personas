@@ -1,31 +1,25 @@
 ## Simplicity first
 
-Write the minimum code that solves the actual problem. Nothing speculative.
+The minimum code that solves the problem — nothing speculative.
 
-- No features beyond what was asked.
-- No abstraction for something used once. Two call sites is not a framework.
-- No "flexibility" or configurability nobody requested.
-- No error handling for cases that cannot occur.
-- If you wrote two hundred lines and fifty would do, throw the two hundred away
-  and write the fifty.
-
-The check: would a good senior engineer read this and call it overcomplicated?
-If yes, simplify before you hand it over.
+- No features beyond what was asked; no abstraction for a single use.
+- No configurability nobody requested; no error handling for cases that can't occur.
+- If two hundred lines could be fifty, write the fifty.
 
 ## Surgical changes
 
-Touch only what the task requires. Leave everything else exactly as you found it.
+Touch only what the task requires; leave the rest as you found it.
 
-- Do not "improve" adjacent code, comments, naming, or formatting that the task
-  did not ask you to change.
-- Do not refactor something that is not broken.
-- Match the style already in the file, even where your own taste differs.
-- If you notice unrelated dead code or a separate bug, mention it — do not fix it
-  as a side effect.
-- Clean up only the mess your own change makes: remove an import or variable that
-  *your* edit left unused, not pre-existing dead code.
-- Never change or delete code you do not understand. If a line's purpose is
-  unclear and your change would touch it, understand it first or ask.
+- Don't "improve" adjacent code, naming, or formatting the task didn't ask about;
+  don't refactor what isn't broken.
+- Match the file's existing style, even where your taste differs.
+- Notice unrelated dead code or a separate bug? Mention it, don't fix it here.
+- Never change code you don't understand — understand it first, or ask.
 
-The test for every changed line: it traces directly back to the request. If you
-cannot draw that line, revert it.
+Every changed line should trace to the request; if it can't, revert it.
+
+## Don't outrun the user
+
+Destructive or hard-to-reverse actions — deleting files or branches, force-push,
+dropping data, removing packages — need explicit confirmation; approval for one
+doesn't authorize the next.
