@@ -53,57 +53,77 @@ summary, and a **concrete scenario**:
 
 A candidate with no nameable scenario is a guess. But pass through everything
 that *has* one, even half-believed — Phase 2 exists to kill the wrong ones, and
-finders that self-censor are the main reason real bugs get missed.
+finders that self-censor are the main reason real bugs get missed. No angle may
+suppress another: if two flag the same line for different reasons, keep both.
+
+If the Agent tool isn't available, don't stop — work every angle yourself,
+sequentially, in this context, and say in the report that it was a single pass
+rather than a parallel fan-out, so nobody misreads the coverage.
 
 ### Correctness
 
 **A · Hunk and enclosing function.** Line by line: what input, state, timing, or
 platform makes this wrong? Inverted conditions, off-by-one, nil deref on a path
 where the value can be absent, missing await, falsy-zero checks, wrong variable
-from a copy-paste, an error swallowed in a catch that should propagate — plus the
-classic traps of this language (mutable default args, loop-variable capture, nil
-map writes, `==` coercion, float equality, timezone drift).
+from a copy-paste, an error swallowed in a catch that should propagate,
+unescaped metacharacters in a regex built from input.
 
-**B · Removed behavior.** For every line the diff deletes or replaces, name the
+**B · Language pitfalls.** The traps specific to this language and framework —
+mutable default arguments and late-binding closures in Python; falsy-zero, `==`
+coercion, and closure-captured loop variables in JS; nil-map writes and
+range-variable capture in Go; string-built SQL; float equality; timezone and DST
+drift. Flag each one the diff introduces.
+
+**C · Removed behavior.** For every line the diff deletes or replaces, name the
 invariant it enforced, then find where the new code re-establishes it. If you
 can't, that is the finding: a dropped guard, a narrowed validation, a deleted
-error path, a test that was covering a real case.
+error path, a test that was covering a real case. Extracted or moved code is the
+usual culprit — a guard or a regex anchor gets left behind in the move.
 
-**C · Cross-file.** For each changed function, grep its callers and check whether
+**D · Cross-file.** For each changed function, grep its callers and check whether
 the change breaks them — a new precondition, a different return shape, a new
 exception, a new ordering requirement. Check the callees too: did another change
 in this same diff make one of these calls unsafe?
 
-**D · Concurrency, resources, contracts.** Shared state touched without
-synchronization; check-then-act races; lock held across a blocking call; work
-started and never awaited or cancelled. Handles, connections, and subscriptions
-opened but not closed on every path. Preconditions of a called API violated, or
-an invariant its callers rely on broken.
+**E · Wrappers, concurrency, resources, contracts.** When the diff adds or
+changes a type that wraps another — cache, proxy, decorator, adapter — check that
+every method routes to the wrapped instance rather than back out through a
+registry, session, or global; a cache whose `delegate` resolves through
+`session.get(...)` instead of `delegate.get(...)` re-enters itself or recurses.
+Check too that it forwards every method its callers actually use.
+
+Then the same class of defect in shared state: writes without synchronization,
+check-then-act races, a lock held across a blocking call, work started and never
+awaited or cancelled. Handles, connections, and subscriptions opened but not
+closed on every path. Preconditions of a called API violated, or an invariant its
+callers rely on broken.
 
 ### Cleanup
 
-**E · Reuse and simplification.** New code that re-implements something the
+**F · Reuse and simplification.** New code that re-implements something the
 codebase already has — grep shared and adjacent modules and name the helper to
 call instead. Also: state that could be derived rather than stored, near-
 duplicate blocks, nesting that early returns would flatten, dead code the diff
 leaves behind.
 
-**F · Efficiency.** Redundant computation, repeated I/O, N+1 access, independent
+**G · Efficiency.** Redundant computation, repeated I/O, N+1 access, independent
 work run sequentially, new blocking work on a startup or per-request path.
 Watch for long-lived objects built from closures — a captured environment keeps
 its whole enclosing scope alive, which leaks when that scope holds anything
 large; a struct copying just the fields it needs does not.
 
-**G · Altitude.** Is the change made at the right depth, or is it a bandaid? A
+**H · Altitude.** Is the change made at the right depth, or is it a bandaid? A
 special case layered onto shared infrastructure usually means the fix didn't go
 deep enough — generalizing the underlying mechanism is the real fix. This is the
 one angle that reads the change as a *decision* rather than as code.
 
-**H · Conventions.** Find the CLAUDE.md files governing the changed files — user
-level, repo root, and any in a directory above a changed file — and check the
-diff against what they actually say. Flag only what you can pin to an exact
-quoted rule and an exact line. No style preferences, no inferring the spirit of
-the document. Nothing to report if no CLAUDE.md applies.
+**I · Conventions.** Find the CLAUDE.md files governing the changed files — the
+user-level one, the repo root, and any CLAUDE.md or CLAUDE.local.md in a
+directory above a changed file (a directory's file governs only what sits at or
+below it). Read each, then check the diff against what they actually say. Flag
+only what you can pin to an exact quoted rule and an exact line, and name the
+file the rule came from so the report can cite it. No style preferences, no
+inferring the spirit of the document. Nothing to report if no CLAUDE.md applies.
 
 ## Phase 2 — Verify
 
@@ -115,13 +135,32 @@ and assign one verdict:
   result that follows. Quote the line.
 - **Plausible** — the mechanism is real but the trigger depends on timing,
   environment, or config you can't see. Say what would settle it.
-- **Refuted** — the code doesn't say what the candidate claims, or it is already
-  guarded elsewhere. Quote the line that proves it.
+- **Refuted** — drop it.
 
-Keep confirmed and plausible; drop refuted without comment. A false positive
-costs the reader more than a missed nitpick.
+**Plausible is the default.** Do not refute something for sounding speculative or
+for depending on runtime state, when that state is realistic — a race, a nil on a
+rare-but-reachable path like an error handler or a cold cache, a falsy zero read
+as missing, an off-by-one on a boundary the code doesn't exclude, a retry storm, a
+pattern that lost its anchor. Those are plausible, and they are exactly the bugs
+that ship.
 
-## Phase 3 — Report
+Refute only on evidence you can construct from the code: it is factually wrong
+(quote the line), it is impossible by a type, constant, or invariant (show it), it
+is already handled in this diff (cite the guard), or it is pure style with no
+observable effect.
+
+## Phase 3 — Sweep for gaps
+
+On a large or risky diff, take one more pass as a fresh reviewer holding the
+verified list. Re-read the diff and the enclosing functions looking **only** for
+what is not already on it — do not re-derive or re-confirm anything. Aim at what
+first passes miss: a guard or anchor dropped during a move or extraction; a
+default evaluated once at definition instead of per call; non-deterministic
+hashing or ordering; a lock whose scope quietly shrank; a predicate with a side
+effect; setup and teardown that no longer mirror each other; a config default
+flipped. Add nothing if nothing is there — padding this pass defeats it.
+
+## Phase 4 — Report
 
 Bugs first, ordered by severity — `critical` (crash, data loss, security),
 `high` (wrong result on a realistic input), `medium` (wrong in an edge case),
@@ -136,7 +175,7 @@ cut cleanups. A long undifferentiated list reads as noise and gets ignored.
 If nothing survives verification, say so plainly and name any residual risk or
 gap in test coverage.
 
-## Phase 4 — Fix (on request)
+## Phase 5 — Fix (on request)
 
 Apply the smallest change that removes each finding — no refactoring past it, no
 adjacent tidying. Skip any fix that would change intended behavior, that reaches

@@ -51,18 +51,22 @@ skills/code-review — original prose. The methodology is modelled on the
     independent finder angles run in parallel; requiring every candidate to
     carry a concrete scenario, with a cleanup's scenario being its cost rather
     than a failure; a verify step that grades each candidate confirmed /
-    plausible / refuted against the code before anything is reported; and the
-    precedence rule that correctness outranks cleanup when the report must be
-    cut. Four angles are close in substance to theirs — removed-behavior
-    auditing, cross-file caller checking, the reuse/simplification and
-    efficiency cleanups, and altitude (a special case layered on shared
-    infrastructure means the fix was too shallow).
+    plausible / refuted against the code, biased toward plausible so that a
+    realistic runtime trigger is not grounds to refute; a gap sweep by a fresh
+    reader holding the verified list; and the precedence rule that correctness
+    outranks cleanup when the report must be cut. Most angles are close in
+    substance to theirs — language pitfalls, removed-behavior auditing,
+    cross-file caller checking, wrapper and proxy delegation, the reuse /
+    simplification and efficiency cleanups, altitude (a special case layered on
+    shared infrastructure means the fix was too shallow), and CLAUDE.md
+    conventions checked against a quotable rule.
 
     Not taken: the five graded effort levels and their fan-out arithmetic,
-    candidate and output caps, the gap-sweep pass, structured-output schemas,
-    and every tool-specific integration. The concurrency/resources/contracts
-    angle and the severity ladder are this persona's own, carried over from the
-    skill this replaces.
+    candidate and output caps, structured-output schemas, verifier grouping by
+    source location, and every tool-specific integration. The concurrency,
+    resource, and contract checks and the severity ladder are this persona's
+    own, carried over from the skill this replaces; they have no counterpart
+    upstream.
 
     This skill supersedes the persona's earlier separate code-review and
     simplify skills; the latter was an adaptation of San's built-in simplify

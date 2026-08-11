@@ -12,25 +12,26 @@ scope: {
 }
 
 find: {
-  label: "Phase 1 — Find (parallel)"
+  label: "Phase 1 — Find (parallel, no angle suppresses another)"
   grid-columns: 2
 
   correctness: {
     label: "Correctness — does it break?"
-    grid-rows: 4
-    a: "A · hunk + enclosing function\nlogic, nil, errors, language pitfalls"
-    b: "B · removed behavior\nwhat invariant did the deleted lines hold?"
-    c: "C · cross-file\ndo callers still hold?"
-    d: "D · concurrency, resources, contracts\nraces, leaks, broken preconditions"
+    grid-rows: 5
+    a: "A · hunk + enclosing function\nlogic, nil, errors, regex metachars"
+    b: "B · language pitfalls\nthe traps of this language and framework"
+    c: "C · removed behavior\nwhat invariant did the deleted lines hold?"
+    d: "D · cross-file\ndo callers still hold?"
+    e: "E · wrappers, concurrency, resources\ndelegation, races, leaks, contracts"
   }
 
   cleanup: {
     label: "Cleanup — is it worth keeping?"
     grid-rows: 4
-    e: "E · reuse & simplification\nexisting helper, derivable state, dead code"
-    f: "F · efficiency\nwasted work, hot paths, captured scope"
-    g: "G · altitude\nspecial case on shared infra = too shallow"
-    h: "H · conventions\nCLAUDE.md rule + the line breaking it"
+    f: "F · reuse & simplification\nexisting helper, derivable state, dead code"
+    g: "G · efficiency\nwasted work, hot paths, captured scope"
+    h: "H · altitude\nspecial case on shared infra = too shallow"
+    i: "I · conventions\nCLAUDE.md rule + the line breaking it"
   }
 }
 
@@ -42,28 +43,35 @@ verify: {
   ladder: |md
     **CONFIRMED** — names the inputs and the wrong result
 
-    **PLAUSIBLE** — mechanism real, trigger uncertain
+    **PLAUSIBLE** — the default; realistic runtime state is not grounds to refute
 
-    **REFUTED** — code doesn't say that, or guarded elsewhere
+    **REFUTED** — only on evidence built from the code
   |
 }
 
+sweep: {
+  label: "Phase 3 — Sweep (large or risky diffs)"
+  shape: rectangle
+  s: "fresh reviewer holding the verified list\nlooks only for what is missing"
+}
+
 report: {
-  label: "Phase 3 — Report"
+  label: "Phase 4 — Report"
   shape: rectangle
   order: "bugs first, then cleanups\ncorrectness outranks cleanup when cutting"
 }
 
 fix: {
-  label: "Phase 4 — Fix (on request)"
+  label: "Phase 5 — Fix (on request)"
   shape: rectangle
   how: "smallest change per confirmed finding\nskip what changes intended behavior\nor reaches outside the diff"
 }
 
 scope -> find: "the diff is the scope"
 find -> verify: "candidates\n(pass anything with a nameable scenario)"
-verify -> report: "keep CONFIRMED + PLAUSIBLE" {style.stroke-width: 3}
+verify -> sweep: "keep CONFIRMED + PLAUSIBLE" {style.stroke-width: 3}
 verify -> dropped: "drop REFUTED" {style.stroke-dash: 4}
+sweep -> report
 report -> fix: "--fix, or the user asks"
 
 dropped: {
@@ -76,4 +84,6 @@ note: |md
   A finding with no concrete scenario is a guess.
   For a cleanup, the scenario is the **cost** —
   what is duplicated, wasted, or harder to maintain.
+
+  No Agent tool? Work every angle inline, and say so in the report.
 | {near: bottom-center}
