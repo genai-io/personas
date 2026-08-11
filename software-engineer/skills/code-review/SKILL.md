@@ -1,12 +1,10 @@
 ---
 name: code-review
 description: >-
-  Review the changed code in one pass — correctness bugs first, then the
-  cleanups the diff invites: duplicated logic, needless complexity, wasted work,
-  fixes patched at the wrong depth, project conventions broken. Every finding is
-  verified against the code before it is reported; fixes are applied on request.
-  Use when the user says "code review", "review my changes", "any bugs", "clean
-  this up", "simplify", or asks whether a change is good to ship.
+  Review the changed code in one pass — correctness bugs first, then cleanups:
+  duplication, needless complexity, wasted work, broken project conventions.
+  Reports findings, then fixes on request. Use when the user says "code review",
+  "review my changes", "any bugs", "clean this up", or "simplify".
 allowed-tools:
   - Bash
   - Read
