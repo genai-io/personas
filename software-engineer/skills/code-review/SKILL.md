@@ -117,13 +117,20 @@ special case layered onto shared infrastructure usually means the fix didn't go
 deep enough — generalizing the underlying mechanism is the real fix. This is the
 one angle that reads the change as a *decision* rather than as code.
 
-**I · Conventions.** Find the CLAUDE.md files governing the changed files — the
-user-level one, the repo root, and any CLAUDE.md or CLAUDE.local.md in a
-directory above a changed file (a directory's file governs only what sits at or
-below it). Read each, then check the diff against what they actually say. Flag
-only what you can pin to an exact quoted rule and an exact line, and name the
-file the rule came from so the report can cite it. No style preferences, no
-inferring the spirit of the document. Nothing to report if no CLAUDE.md applies.
+**I · Conventions.** Find the instruction files that govern the changed code and
+check the diff against what they actually say.
+
+Which files those are depends on the host and the project — the agent
+instructions at the user level and the repo root, plus any in a directory above
+a changed file. `AGENTS.md` and `CLAUDE.md` are the common names; a project may
+instead use `CONVENTIONS.md`, `GEMINI.md`, `.cursorrules`, or
+`.github/copilot-instructions.md`. Look for what is there rather than a fixed
+list, and take local variants (`*.local.md`) with the file they extend. Scope
+matters: a file in a directory governs only what sits at or below it.
+
+Flag only what you can pin to an exact quoted rule and an exact line, and name
+the file the rule came from so the report can cite it. No style preferences, no
+inferring the spirit of the document. Nothing to report if no such file applies.
 
 ## Phase 2 — Verify
 

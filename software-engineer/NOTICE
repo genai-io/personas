@@ -58,8 +58,11 @@ skills/code-review — original prose. The methodology is modelled on the
     substance to theirs — language pitfalls, removed-behavior auditing,
     cross-file caller checking, wrapper and proxy delegation, the reuse /
     simplification and efficiency cleanups, altitude (a special case layered on
-    shared infrastructure means the fix was too shallow), and CLAUDE.md
-    conventions checked against a quotable rule.
+    shared infrastructure means the fix was too shallow), and project
+    conventions checked against a quotable rule. That last angle is generalized
+    here: upstream reads CLAUDE.md specifically, while this persona also ships
+    for other hosts, so it discovers whatever instruction files a project uses
+    and keeps only the directory-scoping and quote-the-rule mechanics.
 
     Not taken: the five graded effort levels and their fan-out arithmetic,
     candidate and output caps, structured-output schemas, verifier grouping by
