@@ -31,6 +31,21 @@ project. Windows:
 
 To remove: same URL, `uninstall.sh` / `uninstall.ps1`.
 
+### Updating
+
+Re-run the same install command — it replaces the persona in place. To see what
+you have first, add `--check` (`-Check` on Windows):
+
+```bash
+curl -fsSL .../install.sh | bash -s -- codex --check
+```
+
+It prints the commit installed, the commit available, and any files you have
+edited since. **Your edits are never discarded**: a re-install that finds them
+moves the whole directory to `<persona>.local-<timestamp>` before writing the
+new copy, and tells you where it went. `SAN_PERSONAS_REF` pins a branch, tag, or
+commit if you'd rather not track `main`.
+
 Or just copy the directories yourself — this repo mirrors the layout of
 `~/.san/personas/` exactly:
 
