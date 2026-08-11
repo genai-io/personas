@@ -1,10 +1,11 @@
 ---
 name: code-review
 description: >-
-  Review the changed code in one pass — correctness bugs first, then cleanups:
-  duplication, needless complexity, wasted work, broken project conventions.
-  Reports findings, then fixes on request. Use when the user says "code review",
-  "review my changes", "any bugs", "clean this up", or "simplify".
+  Review the changed code — or a path you point it at — in one pass: correctness
+  bugs first, then cleanups and design. Duplication, wasted work, naming,
+  over-abstraction, broken project conventions. Reports findings, then fixes on
+  request. Use for "code review", "review my changes", "any bugs", "clean this
+  up", "simplify", "is this naming right", or "is this over-engineered".
 allowed-tools:
   - Bash
   - Read
@@ -17,16 +18,16 @@ argument-hint: "[--fix] [target or focus area]"
 
 # Code Review
 
-One pass over the diff that answers two questions: **does this break anything**,
-and **is this worth keeping as written**. Bugs and cleanups come back in one
-report because they are found in the same reading — but they are ranked
-separately, and bugs always win when something has to be cut.
+One pass that answers two questions: **does this break anything**, and **is this
+worth keeping as written**. Everything comes back in one report because it is
+all found in the same reading — but it is ranked in groups, and bugs always win
+when something has to be cut.
 
 `flow.d2` in this directory diagrams the whole flow.
 
 Default is report-only. Apply fixes when `--fix` is passed or the user asks after
-seeing the report. A trailing focus area (`concurrency`, `efficiency`) narrows
-the angles to that dimension.
+seeing the report. A trailing focus area narrows the angles to one dimension —
+`concurrency`, `efficiency`, `naming`, `overdesign`, `conventions`.
 
 ## Phase 0 — Scope
 
@@ -50,13 +51,12 @@ summary, and a **concrete scenario**:
   change.
 
 A candidate with no nameable scenario is a guess. But pass through everything
-that *has* one, even half-believed — Phase 2 exists to kill the wrong ones, and
-finders that self-censor are the main reason real bugs get missed. No angle may
-suppress another: if two flag the same line for different reasons, keep both.
+that *has* one, even half-believed — Phase 2 kills the wrong ones, and finders
+that self-censor are the main reason real bugs get missed. No angle suppresses
+another: two angles flagging one line for different reasons is two candidates.
 
-If the Agent tool isn't available, don't stop — work every angle yourself,
-sequentially, in this context, and say in the report that it was a single pass
-rather than a parallel fan-out, so nobody misreads the coverage.
+Without the Agent tool, work every angle yourself in one sequential pass, and
+say so in the report so nobody misreads the coverage.
 
 ### Correctness
 
@@ -112,23 +112,50 @@ large; a struct copying just the fields it needs does not.
 
 **H · Altitude.** Is the change made at the right depth, or is it a bandaid? A
 special case layered onto shared infrastructure usually means the fix didn't go
-deep enough — generalizing the underlying mechanism is the real fix. This is the
-one angle that reads the change as a *decision* rather than as code.
+deep enough — generalizing the underlying mechanism is the real fix.
 
-**I · Conventions.** Find the instruction files that govern the changed code and
-check the diff against what they actually say.
+**I · Conventions.** Read the instruction files governing the changed code —
+whatever the project has at the user level, the repo root, and directories above
+a changed file (`AGENTS.md`, `CLAUDE.md`, `CONVENTIONS.md`, `.cursorrules` and
+the like, plus their `*.local.md` variants). A file governs only what sits at or
+below its directory. Flag only what you can pin to an exact quoted rule and an
+exact line, and name the file it came from. No style preferences, no inferring
+the document's spirit.
 
-Which files those are depends on the host and the project — the agent
-instructions at the user level and the repo root, plus any in a directory above
-a changed file. `AGENTS.md` and `CLAUDE.md` are the common names; a project may
-instead use `CONVENTIONS.md`, `GEMINI.md`, `.cursorrules`, or
-`.github/copilot-instructions.md`. Look for what is there rather than a fixed
-list, and take local variants (`*.local.md`) with the file they extend. Scope
-matters: a file in a directory governs only what sits at or below it.
+### Design
 
-Flag only what you can pin to an exact quoted rule and an exact line, and name
-the file the rule came from so the report can cite it. No style preferences, no
-inferring the spirit of the document. Nothing to report if no such file applies.
+**J · Naming.** Can a reader say what this is, or does, without reading the
+implementation? Vocabulary first — one concept under several names
+(`user` / `account` / `member`) makes every reader keep a translation table, and
+it is the only naming defect that compounds; grep the synonyms before judging
+any single name. Then names that mislead: one that hides its effect (a `get`
+that also writes), `and`/`or` confessing to two jobs, a negated form the reader
+must invert, a bare boolean at a call site.
+
+**K · Overdesign.** If this were deleted, what would break? "Nothing, but later
+we might" is the defect. An abstraction with one implementation and no named
+second one — abstract on the second case, which is when you first know what
+varies. An option nobody has changed. A unit that only forwards: remove it and
+ask what the caller would then need to know; if nothing, it hid nothing.
+
+## Do not report
+
+Drop these before Phase 2 rather than spending a verification on them.
+
+- **Language idiom.** Go's absent `Get` prefix and short names in short scopes,
+  Python's dunders, Rust's `into_`/`as_`/`to_`. Idiomatic is not defective.
+- **Domain jargon** practitioners use, and conventional test names (`sut`).
+- **Established public API names** — renaming breaks callers. Report only an
+  actively misleading one, and say what the rename costs.
+- **Exhaustive matching over a closed set** — a switch on a protocol or fixed
+  enum is not missing polymorphism.
+- **A wrapper isolating something volatile.** It buys something real.
+- **Defensive code at a trust boundary.** Input validation, permission checks,
+  and handling of failures that do occur are never speculative — never propose
+  removing them.
+- **Depth and intrinsic complexity.** A large body behind a small interface is
+  the target. An intricate domain produces intricate code.
+- **Preference.** Two forms equally clear means no finding.
 
 ## Phase 2 — Verify
 

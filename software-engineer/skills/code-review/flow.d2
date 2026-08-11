@@ -26,13 +26,23 @@ find: {
   }
 
   cleanup: {
-    label: "Cleanup — is it worth keeping?"
-    grid-rows: 4
+    label: "Cleanup & design — is it worth keeping?\n(F–I absorbed the simplify skill; J–K the naming and overdesign skills)"
+    grid-rows: 6
     f: "F · reuse & simplification\nexisting helper, derivable state, dead code"
     g: "G · efficiency\nwasted work, hot paths, captured scope"
     h: "H · altitude\nspecial case on shared infra = too shallow"
     i: "I · conventions\nquoted rule from the project's\ninstruction files + the line breaking it"
+    j: "J · naming\nsay what it is without reading it"
+    k: "K · overdesign\ndelete it — what breaks?"
   }
+}
+
+guards: {
+  label: "Do not report"
+  shape: rectangle
+  style.stroke-dash: 3
+  g: "idiom · domain jargon · public API names\nexhaustive match · volatile-dep wrapper\ntrust-boundary validation · intrinsic complexity"
+  note: "the guards J and K brought with them,\napplied to all eleven angles"
 }
 
 verify: {
@@ -68,7 +78,8 @@ fix: {
 }
 
 scope -> find: "the diff is the scope"
-find -> verify: "candidates\n(pass anything with a nameable scenario)"
+find -> guards: "candidates\n(pass anything with a nameable scenario)"
+guards -> verify: "what survives the guards"
 verify -> sweep: "keep CONFIRMED + PLAUSIBLE" {style.stroke-width: 3}
 verify -> dropped: "drop REFUTED" {style.stroke-dash: 4}
 sweep -> report

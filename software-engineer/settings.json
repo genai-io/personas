@@ -4,8 +4,6 @@
     "code-review": "active",
     "refactor": "active",
     "debug": "active",
-    "tdd": "active",
-    "naming": "active",
-    "overdesign": "active"
+    "tdd": "active"
   }
 }

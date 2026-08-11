@@ -71,41 +71,14 @@ skills/code-review — original prose. The methodology is modelled on the
     own, carried over from the skill this replaces; they have no counterpart
     upstream.
 
-    This skill supersedes the persona's earlier separate code-review and
-    simplify skills; the latter was an adaptation of San's built-in simplify
-    (Apache-2.0, https://github.com/genai-io/san) and no longer ships here.
+    This skill supersedes four the persona used to ship separately: its own
+    earlier code-review, simplify, naming, and overdesign. Simplify was an
+    adaptation of San's built-in simplify (Apache-2.0,
+    https://github.com/genai-io/san). Naming and overdesign are now angles J
+    and K here, and their sources are recorded below; the shared "do not
+    report" section carries the false-positive guards both of them had.
 
-skills/refactor — original, written from scratch for San.
-
-skills/debug — a distilled adaptation of the "investigate" skill from gstack,
-    used under the MIT License.
-
-        gstack — Copyright (c) 2026 Garry Tan
-        https://github.com/garrytan/gstack
-        commit a3259400a366593e0c909dd9ac3e59752efd2488, file investigate/SKILL.md
-
-    Kept: the methodology — root-cause-before-fix (the "iron law"), the
-    investigate → hypothesis → test → fix → regression-test phases, scope
-    locking, and "a regression means the cause is in the diff". Dropped:
-    everything tied to gstack's own harness (its learnings database, freeze
-    scripts, gbrain sync, host detection, telemetry). Rewritten and retargeted at
-    San's tools (Grep / Read / Bash); not a verbatim copy.
-
-skills/tdd — a distilled adaptation of the "tdd-workflow" skill from ECC, used
-    under the MIT License.
-
-        ECC — Copyright (c) 2026 affaan-m
-        https://github.com/affaan-m/ECC
-        commit ed387446052dfbc6b52de149406b70efa65edc59
-        file .agents/skills/tdd-workflow/SKILL.md
-
-    Kept: the red/green/refactor methodology, test-first, detect-the-runner, and
-    "test behavior, not implementation / keep tests isolated". Dropped: the
-    JavaScript/TypeScript-specific stack (Jest/Vitest/Bun/Playwright, framework
-    mock recipes, fixed coverage thresholds). Rewritten language-agnostic and
-    retargeted at San; not a verbatim copy.
-
-skills/naming — original prose, drawing on two MIT-licensed sources.
+    ANGLE J (naming) — original prose, drawing on two MIT-licensed sources.
 
         Naming cheatsheet — Copyright (c) Artem Zakirullin (kettanaito)
         https://github.com/kettanaito/naming-cheatsheet
@@ -131,8 +104,8 @@ skills/naming — original prose, drawing on two MIT-licensed sources.
     check ranked first as the only one that compounds. The cheatsheet's
     JavaScript examples were dropped; this skill is language-agnostic.
 
-skills/overdesign — original prose. The smells it names are long-established and
-    are cited by name rather than reproduced: Speculative Generality, Lazy Class,
+    ANGLE K (overdesign) — original prose. The smells it names are long-
+    established and are cited by name rather than reproduced: Speculative Generality, Lazy Class,
     Middle Man, and Switch Statements (Fowler, Refactoring); the second-system
     effect (Brooks, The Mythical Man-Month); deep versus shallow modules and
     tactical programming (Ousterhout, A Philosophy of Software Design).
@@ -167,13 +140,44 @@ skills/overdesign — original prose. The smells it names are long-established a
     position; this adaptation turns it into a decision rule — where the
     book-derived heuristics above conflict, the reading that leaves less in the
     reader's working memory wins. Its positions were also narrowed: it rejects
-    layered architecture and DDD more broadly than this skill does, which keeps
-    dependency direction and core-testable-alone as real criteria while dropping
-    only the prescribed ceremony. No sentence from either source is reproduced.
+    layered architecture and DDD more broadly than this angle does, which faults
+    only structure added because a pattern prescribes it, not layering as such.
+    No sentence from either source is reproduced.
 
     Added, present in neither source: the delete-test as the single criterion,
-    abstract-on-the-second-case as the rule, the "when writing rather than
-    reviewing" section, and a "do not report" list that explicitly protects
-    validation at trust boundaries, intrinsic domain complexity, and exhaustive
-    matching over closed sets — guards without which a simplification pass can
-    remove code that is load-bearing.
+    and abstract-on-the-second-case as the rule for when an abstraction has
+    earned its place. The writing-time counterpart is not repeated in the skill
+    — the persona's system prompt already states it under "Simplicity first".
+    The guards that protect trust-boundary validation, intrinsic domain
+    complexity, and exhaustive matching over closed sets now live in the
+    skill's shared "Do not report" section, which serves all eleven angles.
+
+skills/refactor — original, written from scratch for San.
+
+skills/debug — a distilled adaptation of the "investigate" skill from gstack,
+    used under the MIT License.
+
+        gstack — Copyright (c) 2026 Garry Tan
+        https://github.com/garrytan/gstack
+        commit a3259400a366593e0c909dd9ac3e59752efd2488, file investigate/SKILL.md
+
+    Kept: the methodology — root-cause-before-fix (the "iron law"), the
+    investigate → hypothesis → test → fix → regression-test phases, scope
+    locking, and "a regression means the cause is in the diff". Dropped:
+    everything tied to gstack's own harness (its learnings database, freeze
+    scripts, gbrain sync, host detection, telemetry). Rewritten and retargeted at
+    San's tools (Grep / Read / Bash); not a verbatim copy.
+
+skills/tdd — a distilled adaptation of the "tdd-workflow" skill from ECC, used
+    under the MIT License.
+
+        ECC — Copyright (c) 2026 affaan-m
+        https://github.com/affaan-m/ECC
+        commit ed387446052dfbc6b52de149406b70efa65edc59
+        file .agents/skills/tdd-workflow/SKILL.md
+
+    Kept: the red/green/refactor methodology, test-first, detect-the-runner, and
+    "test behavior, not implementation / keep tests isolated". Dropped: the
+    JavaScript/TypeScript-specific stack (Jest/Vitest/Bun/Playwright, framework
+    mock recipes, fixed coverage thresholds). Rewritten language-agnostic and
+    retargeted at San; not a verbatim copy.
