@@ -5,6 +5,7 @@
     "refactor": "active",
     "debug": "active",
     "tdd": "active",
-    "simplify": "active"
+    "naming": "active",
+    "overdesign": "active"
   }
 }

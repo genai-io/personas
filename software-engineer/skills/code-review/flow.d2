@@ -1,0 +1,79 @@
+direction: down
+
+title: |md
+  # code-review
+  correctness + cleanup, in one pass
+| {near: top-center}
+
+scope: {
+  label: "Phase 0 — Scope"
+  shape: rectangle
+  gather: "git diff @{upstream}...HEAD\n+ git diff HEAD if dirty\nor the target passed in"
+}
+
+find: {
+  label: "Phase 1 — Find (parallel)"
+  grid-columns: 2
+
+  correctness: {
+    label: "Correctness — does it break?"
+    grid-rows: 4
+    a: "A · hunk + enclosing function\nlogic, nil, errors, language pitfalls"
+    b: "B · removed behavior\nwhat invariant did the deleted lines hold?"
+    c: "C · cross-file\ndo callers still hold?"
+    d: "D · concurrency, resources, contracts\nraces, leaks, broken preconditions"
+  }
+
+  cleanup: {
+    label: "Cleanup — is it worth keeping?"
+    grid-rows: 4
+    e: "E · reuse & simplification\nexisting helper, derivable state, dead code"
+    f: "F · efficiency\nwasted work, hot paths, captured scope"
+    g: "G · altitude\nspecial case on shared infra = too shallow"
+    h: "H · conventions\nCLAUDE.md rule + the line breaking it"
+  }
+}
+
+verify: {
+  label: "Phase 2 — Verify"
+  shape: rectangle
+  v: "one verifier per candidate\nagainst the actual code"
+
+  ladder: |md
+    **CONFIRMED** — names the inputs and the wrong result
+
+    **PLAUSIBLE** — mechanism real, trigger uncertain
+
+    **REFUTED** — code doesn't say that, or guarded elsewhere
+  |
+}
+
+report: {
+  label: "Phase 3 — Report"
+  shape: rectangle
+  order: "bugs first, then cleanups\ncorrectness outranks cleanup when cutting"
+}
+
+fix: {
+  label: "Phase 4 — Fix (on request)"
+  shape: rectangle
+  how: "smallest change per confirmed finding\nskip what changes intended behavior\nor reaches outside the diff"
+}
+
+scope -> find: "the diff is the scope"
+find -> verify: "candidates\n(pass anything with a nameable scenario)"
+verify -> report: "keep CONFIRMED + PLAUSIBLE" {style.stroke-width: 3}
+verify -> dropped: "drop REFUTED" {style.stroke-dash: 4}
+report -> fix: "--fix, or the user asks"
+
+dropped: {
+  label: "discarded"
+  shape: oval
+  style.opacity: 0.5
+}
+
+note: |md
+  A finding with no concrete scenario is a guess.
+  For a cleanup, the scenario is the **cost** —
+  what is duplicated, wasted, or harder to maintain.
+| {near: bottom-center}

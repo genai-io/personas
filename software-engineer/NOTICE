@@ -40,21 +40,35 @@ ideas — not text taken from the repository above.
 BUNDLED SKILLS
 ==============
 
-skills/code-review — original, written from scratch for San.
+skills/code-review — original prose. The methodology is modelled on the
+    /code-review and /simplify commands built into Claude Code, whose prompts
+    are proprietary and are NOT reproduced here. Their design was studied at
+    Claude Code 2.1.227; only the approach is reused, restated throughout in
+    original wording, and adapted to a persona skill.
+
+    Reused as approach: reviewing correctness and cleanup in a single pass over
+    one diff, since both come out of the same reading; splitting the search into
+    independent finder angles run in parallel; requiring every candidate to
+    carry a concrete scenario, with a cleanup's scenario being its cost rather
+    than a failure; a verify step that grades each candidate confirmed /
+    plausible / refuted against the code before anything is reported; and the
+    precedence rule that correctness outranks cleanup when the report must be
+    cut. Four angles are close in substance to theirs — removed-behavior
+    auditing, cross-file caller checking, the reuse/simplification and
+    efficiency cleanups, and altitude (a special case layered on shared
+    infrastructure means the fix was too shallow).
+
+    Not taken: the five graded effort levels and their fan-out arithmetic,
+    candidate and output caps, the gap-sweep pass, structured-output schemas,
+    and every tool-specific integration. The concurrency/resources/contracts
+    angle and the severity ladder are this persona's own, carried over from the
+    skill this replaces.
+
+    This skill supersedes the persona's earlier separate code-review and
+    simplify skills; the latter was an adaptation of San's built-in simplify
+    (Apache-2.0, https://github.com/genai-io/san) and no longer ships here.
 
 skills/refactor — original, written from scratch for San.
-
-skills/simplify — an adaptation of San's own built-in "simplify" skill, used
-    under the Apache License, Version 2.0.
-
-        San — Copyright 2026 Meng Yan
-        https://github.com/genai-io/san
-        file .san/skills/simplify/SKILL.md
-
-    Kept: the review-then-fix flow and the three lenses (reuse, quality,
-    efficiency) with their concrete checklists. Condensed to match the other
-    bundled skills and given explicit scope boundaries against code-review
-    (bugs) and refactor (structure).
 
 skills/debug — a distilled adaptation of the "investigate" skill from gstack,
     used under the MIT License.
@@ -83,3 +97,76 @@ skills/tdd — a distilled adaptation of the "tdd-workflow" skill from ECC, used
     JavaScript/TypeScript-specific stack (Jest/Vitest/Bun/Playwright, framework
     mock recipes, fixed coverage thresholds). Rewritten language-agnostic and
     retargeted at San; not a verbatim copy.
+
+skills/naming — original prose, drawing on two MIT-licensed sources.
+
+        Naming cheatsheet — Copyright (c) Artem Zakirullin (kettanaito)
+        https://github.com/kettanaito/naming-cheatsheet
+        file README.md
+
+        The Code Smells Catalog — Copyright (c) Marcel Jerzyk
+        https://github.com/Luzkan/smells
+        files content/smells/{fallacious-method-name, binary-operator-in-name,
+        fate-over-action, boolean-blindness}.md
+
+    Kept as ideas, restated in original wording: the A/HC/LC function-naming
+    pattern and its context-order effect; the settled meanings of get/set/reset/
+    compose/handle and the add-remove vs create-delete pairing; the is/has/
+    should boolean prefixes; reflect-the-expected-result; avoid contractions,
+    invented words, and context duplication; singular/plural. From the catalog:
+    a name that omits its effect, "and"/"or" in a name as a confession of two
+    responsibilities, and boolean blindness at the call site.
+
+    Added, present in neither source: the "do not report" list — language idiom
+    outranking the guidance above (Go's absent Get prefix and short names in
+    short scopes, Python and Rust conventions), domain jargon, established
+    public API names, conventional test names — and the one-concept-one-word
+    check ranked first as the only one that compounds. The cheatsheet's
+    JavaScript examples were dropped; this skill is language-agnostic.
+
+skills/overdesign — original prose. The smells it names are long-established and
+    are cited by name rather than reproduced: Speculative Generality, Lazy Class,
+    Middle Man, and Switch Statements (Fowler, Refactoring); the second-system
+    effect (Brooks, The Mythical Man-Month); deep versus shallow modules and
+    tactical programming (Ousterhout, A Philosophy of Software Design).
+
+    Two repositories informed how those smells were grouped and guarded. Neither
+    is reproduced verbatim.
+
+        brooks-lint — Copyright (c) 2026 hyhmrright, MIT License
+        https://github.com/hyhmrright/brooks-lint
+        commit 7ffa7de4d7d355b96a8b0811ab857b043c45fa34
+        files skills/_shared/decay-risks.md, skills/_shared/common.md
+
+    Kept: the shape — a named diagnostic dimension carrying both a symptom list
+    and a "what not to flag" guard list, and the rule that a finding without a
+    stated cost and remedy is noise. Dropped: the 0–100 health score, the
+    history/trend file, the YAML config and suppression system, and the
+    interactive triage flow.
+
+        "Cognitive load is what matters" — Copyright (c) Artem Zakirullin
+        https://github.com/zakirullin/cognitive-load
+        commit d2d60d2311c3854f16d87bf34f38c829667be2a4
+        files README.md, README.agents.md
+        License: CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
+
+    Kept as ideas, restated in original wording: working memory as the constraint
+    that makes readability measurable; deep modules over many shallow ones; that
+    line-count rules for functions are the wrong measure; that a little copying
+    beats a little dependency; and that layered architectures and DDD building
+    blocks are means rather than requirements.
+
+    CHANGES MADE (required by CC BY 4.0): the source is an essay arguing a
+    position; this adaptation turns it into a decision rule — where the
+    book-derived heuristics above conflict, the reading that leaves less in the
+    reader's working memory wins. Its positions were also narrowed: it rejects
+    layered architecture and DDD more broadly than this skill does, which keeps
+    dependency direction and core-testable-alone as real criteria while dropping
+    only the prescribed ceremony. No sentence from either source is reproduced.
+
+    Added, present in neither source: the delete-test as the single criterion,
+    abstract-on-the-second-case as the rule, the "when writing rather than
+    reviewing" section, and a "do not report" list that explicitly protects
+    validation at trust boundaries, intrinsic domain complexity, and exhaustive
+    matching over closed sets — guards without which a simplification pass can
+    remove code that is load-bearing.
